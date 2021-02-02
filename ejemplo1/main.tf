@@ -9,25 +9,26 @@ terraform {
 
 provider "docker" { }
 
-resource "docker_image" "imagen-ubuntu" {
-//  OJO, tomo el último UBUNTU ¿?
-    name = "${var.nombre_imagen}:${var.version_imagen}"
-}
-
-/*
-2 volúmenes dentro del contendor
-HOST
-/home/ubuntu/enviroment/cursoTerraform  >   /cursoTerraform
-/home/ubuntu/enviroment/ivan            >   /ivan
-*/
-
-
-
-
 /*
     Me estoy creando un contenedor
 */
 resource "docker_container" "contenedor-ubuntu" {
   name  = "mi_contenedor_ubuntu"
   image = docker_image.imagen-ubuntu.latest
+  command = ["bash","-c","sleep 600"]
+  dynamic "volumes" {
+    for_each = var.volumenes
+    content {
+        volume_name    = contains( keys(volumes.value), "volume_name") ? volumes.value["volume_name"] : null
+        host_path      = volumes.value["host_path"]
+        container_path = volumes.value["container_path"]
+    }
+  } 
+}
+
+resource "docker_image" "imagen-ubuntu" {
+//  OJO, tomo el último UBUNTU ¿?
+#  name = "ubuntu:21.04"
+#  name = var.nombre_imagen
+  name = "${var.nombre_imagen}:${var.version_imagen}"
 }
