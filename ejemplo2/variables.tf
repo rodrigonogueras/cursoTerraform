@@ -31,8 +31,8 @@ variable "contenedores_muy_diferentes" {
         }
         AMARILLO  = {
             puerto         = 8091  
-            container_path = "/ivan"
             host_path      = "/home/ubuntu/environment/ivan"
+            container_path = "/ivan"
         }
     }
 }
